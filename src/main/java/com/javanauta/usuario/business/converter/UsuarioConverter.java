@@ -8,7 +8,6 @@ import com.javanauta.usuario.infrastructure.entity.Telefone;
 import com.javanauta.usuario.infrastructure.entity.Usuario;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -19,7 +18,8 @@ public class UsuarioConverter {
                 .nome(usuarioDTO.getNome())
                 .email(usuarioDTO.getEmail())
                 .senha(usuarioDTO.getSenha())
-                .enderecos(paraListaEnderecoDTO(usuarioDTO.getEnderecos()))
+                .enderecos(paraListaEndereco(usuarioDTO.getEnderecos()))
+                .telefones(paraListaTelefones(usuarioDTO.getTelefones()))
                 .build();
     }
 
@@ -45,11 +45,11 @@ public class UsuarioConverter {
         return telefoneDTOS.stream().map(this::paraTelefone).toList();
     }
 
-    public List<Telefone> paraTelefone(TelefoneDTO telefonesDTO){
-        return Collections.singletonList(Telefone.builder()
-                .numero(telefonesDTO.getNumero())
-                .ddd(telefonesDTO.getDdd())
-                .build());
+    public Telefone paraTelefone(TelefoneDTO telefoneDTO){
+        return Telefone.builder()
+                .numero(telefoneDTO.getNumero())
+                .ddd(telefoneDTO.getDdd())
+                .build();
     }
     //********************************************************************************
 
@@ -84,10 +84,10 @@ public class UsuarioConverter {
         return telefoneDTOS.stream().map(this::paraTelefoneDTO).toList();
     }
 
-    public List<TelefoneDTO> paraTelefoneDTO(Telefone telefonesDTO){
-        return Collections.singletonList(TelefoneDTO.builder()
-                .numero(telefonesDTO.getNumero())
-                .ddd(telefonesDTO.getDdd())
-                .build());
+    public TelefoneDTO paraTelefoneDTO(Telefone telefones){
+        return TelefoneDTO.builder()
+                .numero(telefones.getNumero())
+                .ddd(telefones.getDdd())
+                .build();
     }
 }
