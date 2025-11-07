@@ -1,11 +1,13 @@
 package com.javanauta.usuario.business;
 
+
 import com.javanauta.usuario.business.converter.UsuarioConverter;
 import com.javanauta.usuario.business.dto.UsuarioDTO;
 import com.javanauta.usuario.infrastructure.entity.Usuario;
 import com.javanauta.usuario.infrastructure.exceptions.ConflictException;
 import com.javanauta.usuario.infrastructure.exceptions.ResourceNotFoundException;
 import com.javanauta.usuario.infrastructure.repository.UsuarioRepository;
+import com.javanauta.usuario.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final UsuarioConverter usuarioConverter;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     public UsuarioDTO salvaUsuario(UsuarioDTO usuarioDTO){
         emailExiste(usuarioDTO.getEmail());
@@ -50,6 +53,25 @@ public class UsuarioService {
 
     public void deletaUsuarioPorEmail(String email){
         usuarioRepository.deleteByEmail(email);
+
+    }
+
+    public UsuarioDTO atualizaDadosUsuario(String token, UsuarioDTO dto){
+        //Busca o email do usuario atraves do token
+       String email = jwtUtil.extrairEmailToken(token.substring(7));
+
+       dto.setSenha(dto.getSenha() != null ? passwordEncoder.encode(dto.getSenha()) : null);
+
+       //busca usuario no banco de dados
+       Usuario usuarioEntity = usuarioRepository.findByEmail(email).orElseThrow(
+               () -> new ResourceNotFoundException("Email não localizado"));
+
+       //mesclou os dados que recebemos na requisicao DTO com os dados do banco
+       Usuario  usuario = usuarioConverter.updateUsuario(dto, usuarioEntity);
+
+
+
+       return usuarioConverter.paraUsuarioDTO(usuarioRepository.save(usuario));
 
     }
 }
