@@ -1,5 +1,6 @@
 package com.javanauta.usuario.business.dto;
 
+
 import lombok.*;
 
 import java.util.List;
