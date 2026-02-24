@@ -19,7 +19,6 @@ import java.util.List;
 public class Usuario implements UserDetails {
 
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,8 +37,9 @@ public class Usuario implements UserDetails {
     private List<Endereco> enderecos;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     private List<Telefone> telefones;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
